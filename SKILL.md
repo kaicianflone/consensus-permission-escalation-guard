@@ -1,6 +1,8 @@
 ---
 name: consensus-permission-escalation-guard
 description: Pre-execution governance for IAM and permission escalation changes. Use when an agent or workflow proposes granting, expanding, or assuming higher privileges and you need deterministic ALLOW/BLOCK/REQUIRE_REWRITE decisions with strict schema validation, idempotency, and board-native audit artifacts.
+metadata:
+  {"openclaw": {"requires": {"bins": ["node", "tsx"], "env": ["CONSENSUS_STATE_FILE", "CONSENSUS_STATE_ROOT"]}}}
 ---
 
 # consensus-permission-escalation-guard
@@ -13,7 +15,7 @@ description: Pre-execution governance for IAM and permission escalation changes.
 - evaluates hard-block and rewrite policy flags for IAM risk patterns
 - runs persona-weighted voting (or aggregates external votes)
 - returns one of: `ALLOW | BLOCK | REQUIRE_REWRITE`
-- writes decision and persona update artifacts for replay/audit
+- writes decision artifacts for replay/audit
 
 ## Decision policy shape
 
@@ -31,8 +33,9 @@ Rewrite examples:
 ## Runtime and safety model
 
 - runtime binaries: `node`, `tsx`
-- credentials: none required for local guard evaluation
-- network behavior: none in deterministic guard logic (persona generation backend may be external depending on your deployment)
+- credentials: none required
+- network behavior: none in deterministic guard logic
+- environment config read by this package: `CONSENSUS_STATE_FILE`, `CONSENSUS_STATE_ROOT`
 - filesystem writes: consensus board/state artifacts under configured state path
 
 ## Invoke contract
@@ -40,8 +43,25 @@ Rewrite examples:
 - `invoke(input, opts?) -> Promise<OutputJson | ErrorJson>`
 
 Modes:
-- `mode="persona"` (default): generate/load persona_set and vote internally
+- `mode="persona"` (default): uses local deterministic persona defaults for internal voting
 - `mode="external_agent"`: consume `external_votes[]`, then aggregate and enforce policy deterministically
+
+## Install assumptions
+
+This repository currently expects a local sibling checkout of `consensus-guard-core`.
+
+```bash
+# from repos/ directory
+# repos/
+#   consensus-guard-core/
+#   consensus-permission-escalation-guard/
+```
+
+Then install dependencies in this repo:
+
+```bash
+npm i
+```
 
 ## Quick start
 
@@ -56,3 +76,5 @@ npm test
 ```
 
 Test coverage includes schema rejection, hard-block paths, rewrite paths, allow paths, idempotent retries, and external-agent aggregation behavior.
+
+Note: this skill depends on `consensus-guard-core` for aggregation/state helpers; review that package alongside this one for full runtime auditability.

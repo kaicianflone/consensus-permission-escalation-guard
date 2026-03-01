@@ -46,7 +46,6 @@ Modes:
 ## Quick start
 
 ```bash
-cd repos/consensus-permission-escalation-guard
 node --import tsx run.js --input ./examples/input.json
 ```
 

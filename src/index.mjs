@@ -2,7 +2,6 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { handler as personaGen } from 'consensus-persona-generator/src/index.mjs';
 import {
   rejectUnknown,
   getLatest,
@@ -10,8 +9,7 @@ import {
   getDecisionByKey,
   writeArtifact,
   aggregateVotes,
-  updateReputations,
-  makeIdempotencyKey,
+    makeIdempotencyKey,
   resolveStatePath
 } from 'consensus-guard-core/src/index.mjs';
 
@@ -238,20 +236,7 @@ export async function handler(input, opts = {}) {
         : await getLatest(board_id, 'persona_set', statePath));
 
     if (!personaSet && !externalMode) {
-      const g = await personaGen({
-        board_id,
-        task_context: {
-          goal: 'permission escalation guard',
-          audience: 'internal governance',
-          risk_tolerance: 'low',
-          constraints: [],
-          domain: 'identity-and-access-management'
-        },
-        n_personas: 5,
-        persona_pack: 'security'
-      }, { statePath });
-      if (g.error) return err(board_id, 'PERSONA_GENERATION_FAILED', g.error.message);
-      personaSet = { persona_set_id: g.persona_set_id, personas: g.personas };
+      personaSet = { persona_set_id: null, personas: [1,2,3,4,5].map((n)=>({ persona_id:`default-${n}`, name:`Default Persona ${n}`, reputation:0.5 })) };
     }
 
     const votes = externalMode ? input.external_votes : makePersonaVotes(personaSet, policyFlags);
@@ -269,7 +254,7 @@ export async function handler(input, opts = {}) {
     const timestamp = new Date().toISOString();
 
     const normalizedDecision = final_decision === 'ALLOW' ? 'APPROVE' : final_decision === 'REQUIRE_REWRITE' ? 'REWRITE' : 'BLOCK';
-    const rep = externalMode ? { personas: [], updates: [] } : updateReputations(personaSet.personas, votes, normalizedDecision);
+    const rep = { personas: [], updates: [] };
 
     const response = {
       board_id,
@@ -305,17 +290,9 @@ export async function handler(input, opts = {}) {
       response
     }, statePath);
 
-    const p = externalMode ? null : await writeArtifact(board_id, 'persona_set', {
-      ...personaSet,
-      persona_set_id: crypto.randomUUID(),
-      updated_at: timestamp,
-      lineage: { parent_persona_set_id: personaSet?.persona_set_id || input.persona_set_id || null },
-      personas: rep.personas
-    }, statePath);
-
     response.board_writes = [
       { type: 'decision', success: true, ref: d.ref },
-      ...(p ? [{ type: 'persona_set', success: true, ref: p.ref }] : [])
+      
     ];
 
     return response;

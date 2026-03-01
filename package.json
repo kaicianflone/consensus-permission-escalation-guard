@@ -10,7 +10,6 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "consensus-guard-core": "^1.1.4",
-    "consensus-persona-generator": "^1.1.4",
     "tsx": "^4.20.3"
   },
   "license": "MIT",

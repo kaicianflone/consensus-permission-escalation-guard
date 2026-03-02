@@ -50,7 +50,6 @@ Rewrite examples:
 ## Runtime and safety model
 
 - runtime binaries: `node`, `tsx`
-- credentials: none required
 - network behavior: none in deterministic guard logic
 - environment config read by this package: `CONSENSUS_STATE_FILE`, `CONSENSUS_STATE_ROOT`
 - filesystem writes: consensus board/state artifacts under configured state path

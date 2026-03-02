@@ -1,6 +1,6 @@
 {
   "name": "consensus-permission-escalation-guard",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "module",
   "scripts": {
     "test": "node --test --import tsx",

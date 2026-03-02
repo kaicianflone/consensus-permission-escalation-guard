@@ -5,6 +5,21 @@ homepage: https://github.com/kaicianflone/consensus-permission-escalation-guard
 source: https://github.com/kaicianflone/consensus-permission-escalation-guard
 upstream:
   consensus-guard-core: https://github.com/kaicianflone/consensus-guard-core
+requires:
+  bins:
+    - node
+    - tsx
+  env:
+    - CONSENSUS_STATE_FILE
+    - CONSENSUS_STATE_ROOT
+install:
+  - id: npm
+    kind: node
+    package: consensus-permission-escalation-guard
+    bins:
+      - node
+      - tsx
+    label: Install consensus-permission-escalation-guard from npm
 ---
 
 # consensus-permission-escalation-guard

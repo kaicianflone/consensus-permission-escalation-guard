@@ -1,25 +1,26 @@
 ---
 name: consensus-permission-escalation-guard
 description: Pre-execution governance for IAM and permission escalation changes. Use when an agent or workflow proposes granting, expanding, or assuming higher privileges and you need deterministic ALLOW/BLOCK/REQUIRE_REWRITE decisions with strict schema validation, idempotency, and board-native audit artifacts.
+version: 0.1.12
 homepage: https://github.com/kaicianflone/consensus-permission-escalation-guard
 source: https://github.com/kaicianflone/consensus-permission-escalation-guard
 upstream:
   consensus-guard-core: https://github.com/kaicianflone/consensus-guard-core
-requires:
-  bins:
-    - node
-    - tsx
-  env:
-    - CONSENSUS_STATE_FILE
-    - CONSENSUS_STATE_ROOT
-install:
-  - id: npm
-    kind: node
-    package: consensus-permission-escalation-guard
-    bins:
-      - node
-      - tsx
-    label: Install consensus-permission-escalation-guard from npm
+metadata:
+  openclaw:
+    requires:
+      bins:
+        - node
+        - tsx
+      env:
+        - CONSENSUS_STATE_FILE
+        - CONSENSUS_STATE_ROOT
+    install:
+      - kind: node
+        package: consensus-permission-escalation-guard
+        bins:
+          - node
+          - tsx
 ---
 
 # consensus-permission-escalation-guard
